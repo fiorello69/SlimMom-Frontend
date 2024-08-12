@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = 'https://slim-mom-backend-team-project-ik9a.onrender.com';
+axios.defaults.baseURL = 'https://diet-683f038f277a.herokuapp.com/';
 // const API_KEY = '';
 
 const END_POINTS = {
@@ -9,7 +9,7 @@ const END_POINTS = {
   ListMyProducts: '/api/myProducts/listMyProduct',
   DeleteMyProduct: '/api/myProducts/',
   GetSearchProducts: '/api/products/searchProducts',
-  UpdateUserInfo: '/api/users/infouser'
+  UpdateUserInfo: '/api/users/infouser',
 };
 
 export const apiCalorieIntake = async body => {
@@ -20,54 +20,58 @@ export const apiCalorieIntake = async body => {
 export const apiUpdateInfoUser = async (token, body) => {
   const res = await axios.put(END_POINTS.UpdateUserInfo, body, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-  })
-  return res.data.result
-}
+  });
+  return res.data.result;
+};
 
 export const apiAddMyProduct = async (body, token, date) => {
   const res = await axios.post(END_POINTS.AddMyProduct, body, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-  })
+  });
 
-  const result = await res.data.newProduct.productInfo
-  return result
-}
+  const result = await res.data.newProduct.productInfo;
+  return result;
+};
 
 export const apiDeleteMyProduct = async (id, token, date) => {
   const res = await axios.delete(END_POINTS.DeleteMyProduct + id, {
     headers: {
-    Authorization: `Bearer ${token}` 
-  },
-  data: {
-    date
-  }
-  })
-  const result = await res.data.newProduct.productInfo
-  return result
-}
+      Authorization: `Bearer ${token}`,
+    },
+    data: {
+      date,
+    },
+  });
+  const result = await res.data.newProduct.productInfo;
+  return result;
+};
 
 export const apiListMyProducts = async (date, token) => {
-  const res = await axios.post(END_POINTS.ListMyProducts, {
-    date
-   }, {
-   headers: {
-     Authorization: `Bearer ${token}`
-   },
-  })
+  const res = await axios.post(
+    END_POINTS.ListMyProducts,
+    {
+      date,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   const result = await res.data.productList;
-  return result
-}
+  return result;
+};
 
-export const apiGetSearchProducts = async (value) => {
+export const apiGetSearchProducts = async value => {
   const res = await axios(END_POINTS.GetSearchProducts, {
     params: {
-      title: value
-    }
-  })
-  const result = await res.data.data
-  return result
-}
+      title: value,
+    },
+  });
+  const result = await res.data.data;
+  return result;
+};
