@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import moment from "moment";
-// const date = moment().format("DD.MM.YYYY") 
+import moment from 'moment';
 const productsState = {
   date: moment().format("DD.MM.YYYY"),
   productsList: []
