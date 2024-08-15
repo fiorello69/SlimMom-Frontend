@@ -1,9 +1,9 @@
 {
-  "name": "final-team-project-frontend",
+  "name": "slimmom",
   "version": "0.1.0",
   "description": "Frontend for final individual project",
   "private": true,
-  "homepage": "https://florinfire80.github.io/Slim_Mom_FE/",
+  "homepage": "https://fiorello69.github.io/SlimMom-Frontend/",
   "dependencies": {
     "@hookform/error-message": "^2.0.0",
     "@reduxjs/toolkit": "^1.8.5",

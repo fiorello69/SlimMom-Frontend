@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const instance = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'https://slimmama-66943d2ded92.herokuapp.com/',
 });
 
 const token = {
@@ -50,11 +50,22 @@ export const axiosRegister = async userData => {
 
 export const axiosLogin = async userData => {
   try {
+    // Trimite cererea POST către server
     const { data } = await instance.post('/auth/login', userData);
+
+    // Setează token-ul în local storage sau în alt loc adecvat
     token.set(data.accessToken);
+
+    // Returnează datele primite de la server
     return data;
   } catch (error) {
-    console.error('Error in axiosLogin:', error);
+    // Loghează eroarea în consola pentru depanare
+    console.error(
+      'Error in axiosLogin:',
+      error.response ? error.response.data : error.message
+    );
+
+    // Aruncă eroarea pentru a fi gestionată de apelant
     throw error;
   }
 };

@@ -11,7 +11,7 @@ import './styles/styles.scss';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter basename="/Slim_Mom_FE">
+    <BrowserRouter basename="/SlimMom-Frontend">
       <Provider store={store}>
         <PersistGate loading={<Loader />} persistor={persistor}>
           <App />
