@@ -1,67 +1,77 @@
-import { routes } from 'components/Routes/routes';
-import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  H1,
-  H2,
-  H4,
-  LI,
-  BOX,
-  ModalWrapper,
-  ButtonWrapper,
-  ButtonForm,
-} from './DailyCalorieIntake.styled';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { nanoid } from '@reduxjs/toolkit';
+import PropTypes from 'prop-types';
 
-const DailyCalorieIntake = ({ backResponse, userParams }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const dailyRate = backResponse.dailyRate;
-  const notAllowedProducts = backResponse.notAllowedProducts;
-  const userDataForRegister = { ...userParams, ...backResponse };
+import s from './DailyCalorieIntake.module.scss';
 
-  const calories = {
-    fontSize: 15,
-  };
+import { items } from './items';
+import Button from 'components/Shared/Button';
+
+import daily from 'redux/daily-rate/daily-rate-selectors';
+
+const DailyCalorieIntake = () => {
+  const notAllowedProducts = useSelector(daily.notAllowedProducts);
+  const dailyRate = Math.round(useSelector(daily.dailyRate));
+
+  let itemsList = [];
+  if (notAllowedProducts.length === 0) {
+    itemsList = items;
+  } else {
+    for (let i = 0; i < 5; i += 1) {
+      itemsList[i] = notAllowedProducts[i];
+    }
+  }
+
+  function removeClassList() {
+    document.querySelector('body').classList.remove('no-scroll');
+  }
 
   return (
-    <ModalWrapper>
-      <H2>
-        Your recommended daily<br></br> calorie intake is
-      </H2>
-
-      <H1>
+    <>
+      <h2 className={s.modalTitle}>
+        Your recommended daily calorie intake is:
+      </h2>
+      <p className={s.modalText}>
         {dailyRate}
-        <span style={calories}>calories</span>
-      </H1>
-      <hr></hr>
-      <H4>Foods you should not eat</H4>
-
-      <ul>
-        {notAllowedProducts.map((prod, index) => (
-          <LI key={index}>
-            <BOX>
-              {index + 1}. {prod}
-            </BOX>
-          </LI>
-        ))}
-      </ul>
-      {location.pathname !== routes.calculator ? (
-        <ButtonWrapper
-          onClick={() =>
-            navigate(routes.register, { state: { userDataForRegister } })
-          }
-        >
-          <ButtonForm type="button">Start losing weight</ButtonForm>
-        </ButtonWrapper>
-      ) : (
-        <ButtonWrapper
-          onClick={() =>
-            navigate(routes.diary)
-          }
-        >
-          <ButtonForm type="button">Go to Diary</ButtonForm>
-        </ButtonWrapper>
-      )}
-    </ModalWrapper>
+        <span className={s.textDescription}>kcal</span>
+      </p>
+      <div className={s.menuGroup}>
+        {itemsList.length > 0 && (
+          <>
+            <p className={s.menuGroupTitle}>
+              Products that are not recommended for use:
+            </p>
+            <ul className={s.menuGroupList}>
+              {itemsList.map(el => (
+                <li key={nanoid()} className={s.menuGroupItems}>
+                  {el}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+      <Link to="/registration">
+        <Button
+          text="Start losing weight"
+          type="button"
+          btnClass="btn"
+          handleClick={removeClassList}
+        />
+      </Link>
+    </>
   );
 };
+
 export default DailyCalorieIntake;
+
+DailyCalorieIntake.defaultProps = {
+  notAllowedProducts: () => {},
+  dailyRate: () => {},
+};
+
+DailyCalorieIntake.propTypes = {
+  notAllowedProducts: PropTypes.func,
+  dailyRate: PropTypes.func,
+};

@@ -1,86 +1,55 @@
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { apiCalorieIntake } from 'services/api/api';
-import DailyCalorieIntake from 'components/DailyCalorieIntake/DailyCalorieIntake';
-import { Overlay, ModalWindow, CloseArrow, ButtonClose } from './Modal.styled';
-// import { Loader } from 'components/Loader/Loader';
-import { LoaderNew } from 'components/LoaderNew/LoaderNew';
-import { useLocation } from 'react-router-dom';
-import { routes } from 'components/Routes/routes';
-import { useMediaQuery } from 'react-responsive';
+import { useEffect } from 'react';
 
-const modalRoot = document.querySelector('#root');
+import s from './Modal.module.scss';
 
-export const Modal = ({ onClose, children, userParams }) => {
-  const [backResponse, setBackResponse] = useState(null);
-  const location = useLocation();
-  const isMobile = useMediaQuery({ query: '(max-width: 426px)' });
+const Modal = ({
+  setModalOpen,
+  overlayClass = 'overlay',
+  modalClass = 'modal',
+  children,
+}) => {
   useEffect(() => {
-    if (!userParams) {
-      return;
-    }
-
-    const fetchData = async () => {
-      const data = await apiCalorieIntake(userParams);
-      if (data) {
-        setBackResponse(data);
+    const onEscPush = e => {
+      if (e.code !== 'Escape') {
+        return;
       }
-    };
-    fetchData();
-  }, [userParams]);
-
-  useEffect(() => {
-    if (backResponse === null) {
-      return;
-    }
-  }, [backResponse]);
-
-  useEffect(() => {
-    const handleKeyDown = e => {
-      if (e.code === 'Escape');
-      onClose();
+      removeNoScrollClassList();
+      setModalOpen(false);
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    const body = document.querySelector('body');
-    body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onEscPush);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      body.style.overflow = 'auto';
+      window.removeEventListener('keydown', onEscPush);
     };
-  }, [onClose]);
+  }, [setModalOpen]);
 
-  const handleBackDropClick = e => {
-    if (e.currentTarget === e.target) {
-      onClose(false);
+  function removeNoScrollClassList() {
+    document.querySelector('body').classList.remove('no-scroll');
+  }
+
+  const closeModal = () => {
+    removeNoScrollClassList();
+    setModalOpen(false);
+  };
+
+  const onOverlayClick = e => {
+    if (e.target === e.currentTarget) {
+      removeNoScrollClassList();
+      setModalOpen(false);
     }
   };
 
-  return createPortal(
-    <Overlay onClick={handleBackDropClick}>
-      <ModalWindow
-        onClose={onClose}
-        style={
-          location.pathname === routes.home && isMobile
-            ? { top: '460px' }
-            : null
-        }
-      >
-        {backResponse ? (
-          <DailyCalorieIntake
-            backResponse={backResponse}
-            userParams={userParams}
-          />
-        ) : (
-          <LoaderNew />
-        )}
+  return (
+    <div className={s[overlayClass]} onClick={onOverlayClick}>
+      <div className={s[modalClass]}>
+        <div className={s.mobileClose}>
+          <span onClick={closeModal} className={s.closeM}></span>
+        </div>
+        <span onClick={closeModal} className={s.closeOther}></span>
         {children}
-        <ButtonClose type="button" onClick={onClose}></ButtonClose>
-        <CloseArrow size="20px" left="20px" onClick={onClose} />
-      </ModalWindow>
-    </Overlay>,
-    modalRoot
+      </div>
+    </div>
   );
 };
 
